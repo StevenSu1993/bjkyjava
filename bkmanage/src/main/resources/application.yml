@@ -1,0 +1,45 @@
+server:
+  port: 8090
+spring:
+  devtools:
+    restart:
+      enabled: true
+  #      additional-paths: src/main/java
+  application:
+    name: teach
+  datasource:
+    url: jdbc:mysql://localhost:3306/teach?characterEncoding=utf8&serverTimezone=UTC
+    username: root
+    password: root
+    driver-class-name: com.mysql.jdbc.Driver
+    # 使用druid数据源
+    type: com.alibaba.druid.pool.DruidDataSource
+  redis:
+    host: 127.0.0.1
+    port: 6379
+    timeout: 10000  #客户端超时
+    lettuce:
+      pool:
+        max-active: 20   #最大连接数
+        min-idle: 5 #最小空闲
+        max-wait: 5000ms  #连接超时
+        max-idle: 20   #最大空闲
+  cache:
+    redis:
+      time-to-live: 5000ms
+#  cloud:
+#    nacos:
+#      discovery:
+#        server-addr: 127.0.0.1:8848
+#        username: nacos
+#        password: nacos
+#        namespace: public #默认就是public
+
+
+#  profiles:
+#    active: dev
+
+rsa:
+  private_key: MIICdgIBADANBgkqhkiG9w0BAQEFAASCAmAwggJcAgEAAoGBAK7ba656clfJZDWikAf2mJJqVMWu0vQ9ZShi13v7j6plaQOPm34tVG71U60cOVw47wz914ejEQ5ozsvrxCnzc5xnb3aVQrOs1sUdJY9pHIdACutu/zH7RCDElaMeA3jFBh5NE00E2LHH/83iROA4UfBC/GfxUqiqe6BztZ/ggvB7AgMBAAECgYAaZSsDIp7CG7eR1SFS4mmzqHN1h+d2URJFH26R266bNUW98N6zFFqriUMBXcJW5o1Hc8YmRnpbp3yYEdYB0ys/UASX6ycA2V4Gu9vmzFOAKvYZ0KC7cAJ9H1LY8OHbPnbV0uu674+tJxFgUnfi8W6qwmU2Uy6htHWnwJiwdlrICQJBANjbkcBXxn07zWCqccr6xCI20qozvSM+r52sfYwh6u6ynWiiR+tZtgpCZGshj/DHNizjUjVF4q0gFg7z1IBOWrcCQQDOax0RmdqspUo8FtoFefaz/C+SwrVV8KjRag78f8MVYtdNM+BmDMUsZtFddnIDwSq6Df2vSzD8/Glk3/3Bx+RdAkEAjsHkrjFaWoDuz88EwDHawgdDIYaT4UrYAz1VHNYLOX3d/86s97MEErboMlpSzpfmAyDWsnlCIuQ3gTpkzt5F+wJAJ1UxzNDMYml8o8aW9MQwxksfpY+EjkO1Z3IWOPb/bWvQKt3fvJJiX/uXmX+gaia8xYc099oUE6DlVFt6Nxqn4QJAeAz/SS77MfZdfY7K4+vXVb23uK9srSADGF0aYFGtVaUkJRWMddV3/WAdyQXxGsmFFOGnxQJgqcY/9j/voWk0eA==
+
+  public_key: MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCu22uuenJXyWQ1opAH9piSalTFrtL0PWUoYtd7+4+qZWkDj5t+LVRu9VOtHDlcOO8M/deHoxEOaM7L68Qp83OcZ292lUKzrNbFHSWPaRyHQArrbv8x+0QgxJWjHgN4xQYeTRNNBNixx//N4kTgOFHwQvxn8VKoqnugc7Wf4ILwewIDAQAB
