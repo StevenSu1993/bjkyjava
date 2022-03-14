@@ -1,10 +1,8 @@
 package com.baojikouyu.teach.controller;
 
 import cn.hutool.core.date.DateTime;
-import cn.hutool.core.util.IdUtil;
 import com.baojikouyu.teach.annotation.Log;
 import com.baojikouyu.teach.pojo.Course;
-import com.baojikouyu.teach.pojo.Menu;
 import com.baojikouyu.teach.pojo.ResponseBean;
 import com.baojikouyu.teach.service.CourseService;
 import com.baojikouyu.teach.util.JWTUtil;
@@ -40,7 +38,7 @@ public class CourseController {
         return new ResponseBean(200, "成功获取菜单", true);
     }
 
-    @Log("新建课程")
+    @Log(desc = "新建课程")
     @PostMapping("auth/createCourse")
     @RequiresAuthentication
     @RequiresRoles("admin")
