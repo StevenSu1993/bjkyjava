@@ -109,7 +109,9 @@ public class UserController {
         User getUser = userService.getUser(authUser.getUsername());
         //数据库中存放的密码都是经过base64加密的
         if (Base64.decodeToString(getUser.getPassword()).equals(password)) {
-            final String sign = JWTUtil.sign(getUser.getName(), getUser.getPassword());
+            final String sign = JWTUtil.sign(getUser.getId(), getUser.getName(), getUser.getPassword());
+            final Integer userId = JWTUtil.getUserId(sign);
+            System.out.println(userId);
             //放入到缓存中去
             if (authUser.getRememberMe()) {
                 //往缓存中放置七天。默认是一天
@@ -124,15 +126,15 @@ public class UserController {
     }
 
 
-    @GetMapping("getAllUser")
+    @GetMapping("/auth/getAllUser")
     @Cacheable(value = "getAllUser")
-    public Page<User> getAll(Integer start, Integer size) {
+    public ResponseBean getAll(Integer start, Integer size) {
         Optional.ofNullable(start).orElse(0);
         Optional.ofNullable(size).orElse(10);
         log.info("进入到getAllUser");
         Page<User> userPage = userService.getAll(start, size);
         log.info("查询到所有用户分页数据: {}", userPage);
-        return userPage;
+        return new ResponseBean(200, "获取用户成功", userPage);
     }
 
 
@@ -140,7 +142,7 @@ public class UserController {
     public ResponseBean login(@RequestBody User user) {
         User getUser = userService.getUser(user.getName());
         if (getUser.getPassword().equals(user.getPassword())) {
-            final String sign = JWTUtil.sign(user.getName(), user.getPassword());
+            final String sign = JWTUtil.sign(getUser.getId(), user.getName(), user.getPassword());
 //        Object k = hashKey(key);
 //            redisTemplate.boundHashOps("shiro_redis_authencache").put(sign, sign);
             return new ResponseBean(200, "Login success", sign);

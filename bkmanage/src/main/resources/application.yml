@@ -27,6 +27,7 @@ spring:
   cache:
     redis:
       time-to-live: 5000ms
+
 #  cloud:
 #    nacos:
 #      discovery:
@@ -34,7 +35,9 @@ spring:
 #        username: nacos
 #        password: nacos
 #        namespace: public #默认就是public
-
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 
 #  profiles:
 #    active: dev
