@@ -34,11 +34,10 @@ public class hello {
 
     @Log
     @RequestMapping("/hello")
-    public String hello1() {
+    public String hello1() throws InterruptedException {
+        Thread.sleep(5000L);
         logger.info("this  is  my firt controller");
         return "hworddsds";
-
-
     }
 
 

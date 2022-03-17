@@ -15,7 +15,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 
-@MapperScan("com.baojikouyu.teach.mapper") //mybatis-p
+
 @EnableCaching //redis缓存
 @SpringBootApplication
 @EnableFeignClients //使用feignClient

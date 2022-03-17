@@ -20,7 +20,7 @@ public interface MenuMapper extends BaseMapper<Menu> {
     List<Menu> getAllByRoleId(@Param("roleId") Integer roleId);
 
 
-    @Select({" SELECT  menu.* " +
+    @Select({" SELECT DISTINCT menu.* " +
             " FROM user, role, user_role, role_menu, menu" +
             " WHERE user_id = user_role.user_id" +
             " AND user_role.role_id = role.id" +
@@ -31,7 +31,7 @@ public interface MenuMapper extends BaseMapper<Menu> {
     List<Menu> getAllByUserId(@Param("userId") Integer userId);
 
 
-    @Select({" SELECT  menu.* " +
+    @Select({" SELECT DISTINCT menu.* " +
             " FROM user, role, user_role, role_menu, menu" +
             " WHERE user_id = user_role.user_id" +
             " AND user_role.role_id = role.id" +
