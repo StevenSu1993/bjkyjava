@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.baojikouyu.teach.mapper.FilesMapper">
+
+    <resultMap id="BaseResultMap" type="com.baojikouyu.teach.pojo.Files">
+            <id property="id" column="id" jdbcType="INTEGER"/>
+            <result property="fileName" column="file_name" jdbcType="VARCHAR"/>
+            <result property="uuidFileName" column="file_timestamp_name" jdbcType="VARCHAR"/>
+            <result property="filePath" column="file_path" jdbcType="VARCHAR"/>
+            <result property="uploadTime" column="upload_time" jdbcType="TIMESTAMP"/>
+            <result property="fileType" column="file_type" jdbcType="VARCHAR"/>
+            <result property="createrName" column="creater_name" jdbcType="VARCHAR"/>
+            <result property="createrId" column="creater_id" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,file_name,uuid_file_name,
+        file_path,upload_time,file_type,
+        creater_name,creater_id
+    </sql>
+</mapper>

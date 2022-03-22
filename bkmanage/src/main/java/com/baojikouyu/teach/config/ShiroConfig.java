@@ -3,13 +3,13 @@ package com.baojikouyu.teach.config;
 import com.baojikouyu.teach.filter.JWTFilter;
 import com.baojikouyu.teach.shiro.CustomAuthenticationCache;
 import com.baojikouyu.teach.shiro.CustomAuthorizationCache;
-import com.baojikouyu.teach.shiro.CustomCacheManager;
 import com.baojikouyu.teach.shiro.MyRealm;
 import org.apache.shiro.mgt.DefaultSessionStorageEvaluator;
 import org.apache.shiro.mgt.DefaultSubjectDAO;
 import org.apache.shiro.spring.LifecycleBeanPostProcessor;
 import org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
+import org.apache.shiro.web.filter.InvalidRequestFilter;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
 import org.springframework.context.annotation.Bean;
@@ -55,6 +55,7 @@ public class ShiroConfig {
 
     @Bean("shiroFilter")
     public ShiroFilterFactoryBean factory(DefaultWebSecurityManager securityManager) {
+//    public ShiroFilterFactoryBean factory(DefaultWebSecurityManager securityManager,InvalidRequestFilter invalidRequestFilter) {
         ShiroFilterFactoryBean factoryBean = new ShiroFilterFactoryBean();
 
         // 添加自己的过滤器并且取名为jwt
@@ -65,6 +66,9 @@ public class ShiroConfig {
         factoryBean.setSecurityManager(securityManager);
         factoryBean.setUnauthorizedUrl("/401");
 
+        final Map<String, Filter> filters = factoryBean.getFilters();
+/*        filters.remove("invalidRequest");
+        filters.put("invalidRequest", invalidRequestFilter);*/
         /*
          * 自定义url规则
          * http://shiro.apache.org/web.html#urls-
@@ -103,5 +107,13 @@ public class ShiroConfig {
         return advisor;
     }
 
+    //路径中有中文的时候，shiro 是会拦截的, 不安全
+    // @Bean
+    public InvalidRequestFilter invalidRequestFilter(){
+        InvalidRequestFilter invalidRequestFilter = new InvalidRequestFilter();
+        invalidRequestFilter.setBlockNonAscii(false);
+        invalidRequestFilter.setBlockSemicolon(false);
+        return invalidRequestFilter;
+    }
 
 }

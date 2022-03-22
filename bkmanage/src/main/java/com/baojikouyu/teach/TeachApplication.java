@@ -2,22 +2,19 @@ package com.baojikouyu.teach;
 
 
 import com.baojikouyu.teach.config.LogConfig;
-import org.apache.catalina.Context;
-import org.apache.catalina.connector.Connector;
-import org.apache.tomcat.util.descriptor.web.SecurityCollection;
-import org.apache.tomcat.util.descriptor.web.SecurityConstraint;
-import org.mybatis.spring.annotation.MapperScan;
+import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
+import org.apache.shiro.web.filter.InvalidRequestFilter;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.context.annotation.Bean;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 
 @EnableCaching //redis缓存
 @SpringBootApplication
+@EnableTransactionManagement
 @EnableFeignClients //使用feignClient
 public class TeachApplication {
 
@@ -55,10 +52,12 @@ public class TeachApplication {
     public static void main(String[] args) {
         final ConfigurableApplicationContext run = SpringApplication.run(TeachApplication.class, args);
 
-//        while (true){
-//            final LogConfig bean = run.getBean(LogConfig.class);
-//            System.out.println(bean);
-//
-//        }
+  /*      ShiroFilterFactoryBean shiroFilter = (ShiroFilterFactoryBean) run.getBean(ShiroFilterFactoryBean.class);
+        System.out.println(shiroFilter);
+        InvalidRequestFilter bean1 = run.getBean(InvalidRequestFilter.class);
+        System.out.println(bean1);
+        final LogConfig bean = run.getBean(LogConfig.class);
+        System.out.println(bean);*/
+
     }
 }
