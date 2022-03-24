@@ -19,7 +19,7 @@ public interface FilesService extends IService<Files> {
 
     Page<Files> getPageByType(Integer start, Integer size, Integer type);
 
-    Future<Boolean> saveFile(String filePath, String newFileName, MultipartFile file);
+//    Future<Boolean> saveFile(String filePath, String newFileName, MultipartFile file);
 
     Boolean saveFile(String filePath, String newFileName, MultipartFile file, Files files) throws InterruptedException, ExecutionException;
 

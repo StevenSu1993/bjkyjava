@@ -188,6 +188,8 @@ public enum FileType {
      */
     MPG("MPG"),
 
+    MPEG("MPEG"),
+
     /**
      * Quicktime.
      */

@@ -28,7 +28,7 @@ public class FileTypeUtil {
 
         FileType[] tottents = {FileType.TORRENT};
 
-        FileType[] audios = {FileType.WAV, FileType.MP3};
+        FileType[] audios = {FileType.WAV, FileType.MP3,FileType.MPEG};
 
         FileType[] others = {};
 

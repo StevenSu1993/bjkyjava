@@ -95,7 +95,7 @@ public class FileController {
         Integer fileType = FileTypeUtil.isFileType(fileExtension);
         String originFileName = file.getOriginalFilename();//获取文件原始的名称
         String uuidFileName = UUID.randomUUID().toString();
-        String newFileName = uuidFileName + "." + file.getContentType().split("/")[1];
+        String newFileName = uuidFileName + "." + Objects.requireNonNull(file.getOriginalFilename()).split("\\.")[1];
         //获取项目运行的绝对路径
 //        String filePath = System.getProperty("user.dir");
         String filePath = fileRootPath;

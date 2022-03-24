@@ -1,31 +1,26 @@
 package com.baojikouyu.teach.service.impl;
 
-import com.baojikouyu.teach.pojo.Course;
+import com.baojikouyu.teach.mapper.FilesMapper;
+import com.baojikouyu.teach.pojo.Files;
 import com.baojikouyu.teach.pojo.FilesDto;
+import com.baojikouyu.teach.service.FilesService;
+import com.baojikouyu.teach.util.AsyncTasks;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.baojikouyu.teach.pojo.Files;
-import com.baojikouyu.teach.service.FilesService;
-import com.baojikouyu.teach.mapper.FilesMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 /**
@@ -34,11 +29,15 @@ import java.util.concurrent.Future;
  * @createDate 2022-03-20 01:00:03
  */
 @Service
+@Slf4j
 public class FilesServiceImpl extends ServiceImpl<FilesMapper, Files>
         implements FilesService {
 
     @Autowired
     private FilesMapper filesMapper;
+
+    @Autowired
+    private AsyncTasks asyncTasks;
 
     @Override
     @Cacheable(value = "getPageByType")
@@ -54,49 +53,19 @@ public class FilesServiceImpl extends ServiceImpl<FilesMapper, Files>
         return filesMapper.selectPage(page, queryWrapper);
     }
 
-
-    @Async
-    @Override
-    public Future<Boolean> saveFile(String filePath, String newFileName, MultipartFile file) {
-        File file1 = new File(filePath);
-
-        if (!file1.exists()) {
-            file1.mkdirs();
-        }
-        FileOutputStream fileOutputStream = null;
-        try {
-            fileOutputStream = new FileOutputStream(filePath + newFileName);
-            fileOutputStream.write(file.getBytes());
-            fileOutputStream.flush();
-            fileOutputStream.close();
-            return new AsyncResult<>(true);
-        } catch (java.io.IOException e) {
-            e.printStackTrace();
-            return new AsyncResult<>(false);
-        }
-    }
-
-    @Async
-    public void deleteFile(String filePath) {
-        File file1 = new File(filePath);
-        boolean delete = file1.delete();
-        if (!delete) {
-            file1.deleteOnExit();//等待别的线程对文件操作完成的时候删除掉文件
-        }
-    }
-
     @Override
     @Transactional
     @CacheEvict(value = {"getPageByType", "getFileByNameAndSort"},
             allEntries = true)
     public Boolean saveFile(String filePath, String newFileName, MultipartFile file, Files files) {
+        log.info("saveFile方法线程:{}", Thread.currentThread().getName());
         //异步的去存文件，比同步执行提升的速度就是往数据库中存数据的时间。
-        final Future<Boolean> future = saveFile(filePath, newFileName, file);
+        final Future<Boolean> future = asyncTasks.saveFile(filePath, newFileName, file);
         int insert = 0;
         try {
             insert = filesMapper.insert(files);
         } catch (Exception e) {
-            deleteFile(filePath + newFileName);
+            asyncTasks.deleteFile(filePath + newFileName);
             //这里是手动回滚了不需要在抛一个RuntimeException了 , 因为spring管理的事务只能捕获到RuntimeException
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             e.printStackTrace();
@@ -109,12 +78,12 @@ public class FilesServiceImpl extends ServiceImpl<FilesMapper, Files>
                 isSucessed = future.get();
                 //磁盘写入失败
                 if (!isSucessed) {
-                    deleteFile(filePath + newFileName);
+                    asyncTasks.deleteFile(filePath + newFileName);
                     //这里是手动回滚了不需要在抛一个RuntimeException了 , 因为spring管理的事务只能捕获到RuntimeException
                     TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
                 }
             } catch (Exception e) {
-                deleteFile(filePath + newFileName);
+                asyncTasks.deleteFile(filePath + newFileName);
                 //这里是手动回滚了不需要在抛一个RuntimeException了 , 因为spring管理的事务只能捕获到RuntimeException
                 TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
                 e.printStackTrace();
@@ -123,7 +92,7 @@ public class FilesServiceImpl extends ServiceImpl<FilesMapper, Files>
             return true;
         } else {
             //没插入成功的情况,删除掉文件
-            deleteFile(filePath + newFileName);
+            asyncTasks.deleteFile(filePath + newFileName);
             return false;
         }
     }
@@ -144,7 +113,7 @@ public class FilesServiceImpl extends ServiceImpl<FilesMapper, Files>
             return false;
         }
         files.forEach(files1 -> {
-            deleteFile(files1.getFilePath() + files1.getUuidFileName());
+            asyncTasks.deleteFile(files1.getFilePath() + files1.getUuidFileName());
         });
         return i > 0;
     }
