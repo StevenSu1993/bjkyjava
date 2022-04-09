@@ -7,6 +7,7 @@
     <resultMap id="BaseResultMap" type="com.baojikouyu.teach.pojo.Menu">
             <id property="id" column="id" jdbcType="INTEGER"/>
             <result property="name" column="name" jdbcType="VARCHAR"/>
+            <result property="icon" column="icon" jdbcType="VARCHAR"/>
             <result property="url" column="url" jdbcType="VARCHAR"/>
             <result property="ischild" column="isChild" jdbcType="INTEGER"/>
             <result property="pid" column="pid" jdbcType="INTEGER"/>
@@ -19,7 +20,7 @@
     </resultMap>
 
     <sql id="Base_Column_List">
-        id,name,url,
+        id,name,icon,url,
         isChild,pid,role_id,
         creat_time,update_time,type,
         creater_id,create_name

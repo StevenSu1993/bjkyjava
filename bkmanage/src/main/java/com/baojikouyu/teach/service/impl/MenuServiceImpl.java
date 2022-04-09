@@ -7,6 +7,7 @@ import com.baojikouyu.teach.mapper.MenuMapper;
 import com.google.common.collect.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
@@ -25,6 +26,7 @@ import java.util.stream.Stream;
  * @createDate 2022-03-11 18:06:30
  */
 @Service
+@CacheConfig(cacheNames = "menu",keyGenerator = "keyGenerator")
 public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu>
         implements MenuService {
 
@@ -34,7 +36,8 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu>
 
 
     @Override
-    @Cacheable(value = "getMenuByUserId", key = "#userId")
+//    @Cacheable(value = "getMenuByUserId", key = "#userId")
+    @Cacheable
     public List<Menu> getMenuByUserId(Integer userId) {
         return menuMapper.getAllByUserId(userId);
     }
@@ -49,7 +52,7 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu>
     public List<Menu> getTreeMenu(List<Menu> menus) {
         ArrayList<Menu> finalMenus = Lists.newArrayList();
         if (menus != null && menus.size() > 0) {
-            //因为在数据中返回的menu该字段并没有复制
+            //因为在数据中返回的menu该字段并没有赋值
 //            menus.forEach(menu -> menu.setChildMenu(new LinkedList<>()));
             for (Menu menu : menus) {
                 for (Menu menu1 : menus) {

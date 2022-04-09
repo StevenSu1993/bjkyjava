@@ -127,7 +127,6 @@ public class UserController {
 
 
     @GetMapping("/auth/getAllUser")
-    @Cacheable(value = "getAllUser")
     public ResponseBean getAll(Integer start, Integer size) {
         Optional.ofNullable(start).orElse(0);
         Optional.ofNullable(size).orElse(10);

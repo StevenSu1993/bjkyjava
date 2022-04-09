@@ -31,6 +31,8 @@ public class ExceptionController {
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseBean globalException(HttpServletRequest request, Throwable ex) {
+        // 打印在控制台上要不然异常不好看呀
+        ex.printStackTrace();
         return new ResponseBean(getStatus(request).value(), ex.getMessage(), null);
     }
 

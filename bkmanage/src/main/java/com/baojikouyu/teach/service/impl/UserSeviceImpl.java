@@ -8,17 +8,21 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@CacheConfig(cacheNames = "user",keyGenerator = "keyGenerator")
 public class UserSeviceImpl extends ServiceImpl<UserMapper, User> implements UserService {
 
     @Autowired
     private UserMapper userMapper;
 
     @Override
+    @Cacheable
     public Page<User> getAll(Integer start, Integer size) {
         return userMapper.selectPage(new Page<>(start, size), Wrappers.lambdaQuery());
     }

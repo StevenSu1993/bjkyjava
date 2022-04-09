@@ -23,4 +23,25 @@ public class FilesDto {
 
     //按照类型查询  1 表示图片,2 表示文档,3 表示视频,4 表示种子,5 表示音乐,6 表示其它
     private Integer type;
+
+    private String folderName;
+
+    private Boolean isFolder;
+
+    private Boolean excludeFolder;
+
+    private Integer parentFolderId;
+
+    private Integer folderGrade;
+
+    //id 集合
+    private Integer[] ids;
+
+    // 要移动到的父目录的id
+    private Integer to;
+
+    private Integer curentFolderId;
+
+    private Boolean isCreated;
+
 }

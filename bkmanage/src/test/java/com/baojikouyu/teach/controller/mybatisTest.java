@@ -25,6 +25,12 @@ public class mybatisTest {
 
     }
 
+    @Test
+    public void test2() {
+
+
+    }
+
 
 
 

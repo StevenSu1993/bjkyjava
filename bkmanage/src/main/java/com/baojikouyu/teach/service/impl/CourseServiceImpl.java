@@ -8,6 +8,7 @@ import com.baojikouyu.teach.pojo.Course;
 import com.baojikouyu.teach.service.CourseService;
 import com.baojikouyu.teach.mapper.CourseMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -19,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
  * @createDate 2022-03-14 20:27:13
  */
 @Service
+@CacheConfig(cacheNames = "course", keyGenerator = "keyGenerator")
 public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course>
         implements CourseService {
 
@@ -27,12 +29,13 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course>
 
     @Override
     // 指定清除user缓存区所有缓存数据
-    @CacheEvict(
-            value = {"getAllCourseByPage",
-                    "getCountCourse",
-                    "getCountCourseByName",
-                    "getCourseByCreateOrCourseName"},
-            allEntries = true)
+//    @CacheEvict(
+//            value = {"getAllCourseByPage",
+//                    "getCountCourse",
+//                    "getCountCourseByName",
+//                    "getCourseByCreateOrCourseName"},
+//            allEntries = true)
+    @CacheEvict(value = {"course"}, allEntries = true)
     @Transactional
     public int create(Course course) {
         return courseMapper.insert(course);
@@ -40,19 +43,22 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course>
 
 
     @Override
-    @Cacheable(value = "getAllCourseByPage")
+    @Cacheable
+//    @Cacheable(value = "getAllCourseByPage")
     public Page<Course> getAllCourseByPage(Integer start, Integer size) {
         return courseMapper.selectPage(new Page<>(start, size), Wrappers.lambdaQuery());
     }
 
     @Override
-    @Cacheable(value = "getCountCourse")
+//    @Cacheable(value = "getCountCourse")
+    @Cacheable
     public long getCountCourse() {
         return this.count();
     }
 
     @Override
-    @Cacheable(value = "getCountCourseByName")
+//    @Cacheable(value = "getCountCourseByName")
+    @Cacheable
     public long getCountCourseByName(String name) {
         LambdaQueryWrapper<Course> queryWrapper = Wrappers.lambdaQuery(Course.class).like(Course::getName, name).or().eq(Course::getCreator, name);
         return this.count(queryWrapper);

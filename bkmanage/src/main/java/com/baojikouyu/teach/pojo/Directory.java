@@ -4,22 +4,17 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-
 import java.io.Serializable;
 import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
-
-import lombok.Builder;
 import lombok.Data;
 
 /**
- * @TableName menu
+ *
+ * @TableName directory
  */
-@TableName(value = "menu")
+@TableName(value ="directory")
 @Data
-public class Menu implements Serializable {
-
+public class Directory implements Serializable {
     /**
      *
      */
@@ -34,53 +29,34 @@ public class Menu implements Serializable {
     /**
      *
      */
-    private String url;
-
-    /**
-     *
-     */
-    private Integer ischild;
-
-    /**
-     *
-     */
-    private Integer pid;
-
-    /**
-     *
-     */
-    private Integer roleId;
-
-    /**
-     *
-     */
-    private Date creatTime;
-
-    /**
-     *
-     */
-    private Date updateTime;
-
-    /**
-     *
-     */
-    private Integer type;
-
-    /**
-     *
-     */
     private Integer createrId;
 
     /**
      *
      */
-    private String createName;
+    private String creater;
 
-    private String component;
+    /**
+     *
+     */
+    private Date createTime;
 
-    private String icon;
+    /**
+     * 目录级别
+     */
+    private Integer grade;
 
-    private List<Menu> childMenu = new LinkedList<>();
+    /**
+     * 是否是夫目录
+     */
+    private Boolean isParent;
+
+    /**
+     * 夫目录的id
+     */
+    private Integer parentId;
+
+    private Directory parentDirectory;
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;

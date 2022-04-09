@@ -1,0 +1,94 @@
+server:
+  port: 8090
+  servlet:
+    encoding:
+      force: true
+      charset: UTF-8
+spring:
+  devtools:
+    restart:
+      enabled: true
+  #      additional-paths: src/main/java
+  application:
+    name: teach
+  datasource:
+    url: jdbc:mysql://localhost:3306/teach?characterEncoding=utf8&serverTimezone=UTC
+    username: root
+    password: root
+    driver-class-name: com.mysql.jdbc.Driver
+    # 使用druid数据源
+    type: com.alibaba.druid.pool.DruidDataSource
+  redis:
+    host: 127.0.0.1
+    port: 6379
+    timeout: 10000  #客户端超时
+    lettuce:
+      pool:
+        max-active: 20   #最大连接数
+        min-idle: 5 #最小空闲
+        max-wait: 5000ms  #连接超时
+        max-idle: 20   #最大空闲
+  #@cache注解的扩展。标记了@cache 缓存的key过期时间
+  cache:
+    redis:
+      time-to-live: 5000ms
+  #rabbitmq
+  rabbitmq:
+    host: 192.168.0.105
+    port: 5672
+    username: root
+    password: root
+    virtual-host: /bjky
+    listener:
+      simple:
+        concurrency: 5 # 消费端的监听个数(即@RabbitListener开启几个线程去处理数据。)
+        max-concurrency: 10 #最大并发
+        acknowledge-mode: manual # 签收模式
+        prefetch: 1 # 消费端限流 ，每个线程最多取一个数据
+
+
+
+  #配置静态资源访问路径
+  resources:
+    static-locations: [ 'classpath:/META-INF/resources/','classpath:/resources/','classpath:/static/','classpath:/public/','classpath:/webapp/','file:${upFile.path}' ]
+
+  #设置最大文件上传大小， 默认是1m . 如果配置了nginx，还需要修改nginx的配置
+  servlet:
+    multipart:
+      max-file-size: 1024MB
+      max-request-size: 1024MB
+
+#spring:
+#  servlet:
+#    multipart:
+#      enabled: true #是否启用http上传处理
+#      max-file-size: 10MB #设置单个文件最大长度
+#      max-request-size: 100MB #最大请求文件的大小
+#  cloud:
+#    nacos:
+#      discovery:
+#        server-addr: 127.0.0.1:8848
+#        username: nacos
+#        password: nacos
+#        namespace: public #默认就是public
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+#  profiles:
+#    active: dev
+upFile:
+  path: "C:\\upFile\\temp\\" #存储路径
+
+
+serverUrl: "http:localhost:8090/"
+
+#配置静态资源访问路径
+#  web:
+#    resources:
+#      static-locations: [ 'classpath:/META-INF/resources/','classpath:/resources/','classpath:/static/','classpath:/public/','classpath:/webapp/','file:${upFile.path}' ]
+
+rsa:
+  private_key: MIICdgIBADANBgkqhkiG9w0BAQEFAASCAmAwggJcAgEAAoGBAK7ba656clfJZDWikAf2mJJqVMWu0vQ9ZShi13v7j6plaQOPm34tVG71U60cOVw47wz914ejEQ5ozsvrxCnzc5xnb3aVQrOs1sUdJY9pHIdACutu/zH7RCDElaMeA3jFBh5NE00E2LHH/83iROA4UfBC/GfxUqiqe6BztZ/ggvB7AgMBAAECgYAaZSsDIp7CG7eR1SFS4mmzqHN1h+d2URJFH26R266bNUW98N6zFFqriUMBXcJW5o1Hc8YmRnpbp3yYEdYB0ys/UASX6ycA2V4Gu9vmzFOAKvYZ0KC7cAJ9H1LY8OHbPnbV0uu674+tJxFgUnfi8W6qwmU2Uy6htHWnwJiwdlrICQJBANjbkcBXxn07zWCqccr6xCI20qozvSM+r52sfYwh6u6ynWiiR+tZtgpCZGshj/DHNizjUjVF4q0gFg7z1IBOWrcCQQDOax0RmdqspUo8FtoFefaz/C+SwrVV8KjRag78f8MVYtdNM+BmDMUsZtFddnIDwSq6Df2vSzD8/Glk3/3Bx+RdAkEAjsHkrjFaWoDuz88EwDHawgdDIYaT4UrYAz1VHNYLOX3d/86s97MEErboMlpSzpfmAyDWsnlCIuQ3gTpkzt5F+wJAJ1UxzNDMYml8o8aW9MQwxksfpY+EjkO1Z3IWOPb/bWvQKt3fvJJiX/uXmX+gaia8xYc099oUE6DlVFt6Nxqn4QJAeAz/SS77MfZdfY7K4+vXVb23uK9srSADGF0aYFGtVaUkJRWMddV3/WAdyQXxGsmFFOGnxQJgqcY/9j/voWk0eA==
+
+  public_key: MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCu22uuenJXyWQ1opAH9piSalTFrtL0PWUoYtd7+4+qZWkDj5t+LVRu9VOtHDlcOO8M/deHoxEOaM7L68Qp83OcZ292lUKzrNbFHSWPaRyHQArrbv8x+0QgxJWjHgN4xQYeTRNNBNixx//N4kTgOFHwQvxn8VKoqnugc7Wf4ILwewIDAQAB

@@ -5,19 +5,23 @@
 <mapper namespace="com.baojikouyu.teach.mapper.FilesMapper">
 
     <resultMap id="BaseResultMap" type="com.baojikouyu.teach.pojo.Files">
-            <id property="id" column="id" jdbcType="INTEGER"/>
-            <result property="fileName" column="file_name" jdbcType="VARCHAR"/>
-            <result property="uuidFileName" column="file_timestamp_name" jdbcType="VARCHAR"/>
-            <result property="filePath" column="file_path" jdbcType="VARCHAR"/>
-            <result property="uploadTime" column="upload_time" jdbcType="TIMESTAMP"/>
-            <result property="fileType" column="file_type" jdbcType="VARCHAR"/>
-            <result property="createrName" column="creater_name" jdbcType="VARCHAR"/>
-            <result property="createrId" column="creater_id" jdbcType="INTEGER"/>
+        <id property="id" column="id" jdbcType="INTEGER"/>
+        <result property="fileName" column="file_name" jdbcType="VARCHAR"/>
+        <result property="uuidFileName" column="file_timestamp_name" jdbcType="VARCHAR"/>
+        <result property="filePath" column="file_path" jdbcType="VARCHAR"/>
+        <result property="uploadTime" column="upload_time" jdbcType="TIMESTAMP"/>
+        <result property="fileType" column="file_type" jdbcType="VARCHAR"/>
+        <result property="createrName" column="creater_name" jdbcType="VARCHAR"/>
+        <result property="createrId" column="creater_id" jdbcType="INTEGER"/>
+        <result property="parentFolderId" column="parent_folderId" jdbcType="INTEGER"/>
+        <result property="isFolder" column="is_folder" jdbcType="BOOLEAN"/>
+        <result property="folderGrade" column="folder_grade" jdbcType="BOOLEAN"/>
     </resultMap>
 
     <sql id="Base_Column_List">
         id,file_name,uuid_file_name,
         file_path,upload_time,file_type,
-        creater_name,creater_id
+        creater_name,creater_id,parent_folderId,is_folder,folder_grade
     </sql>
+
 </mapper>

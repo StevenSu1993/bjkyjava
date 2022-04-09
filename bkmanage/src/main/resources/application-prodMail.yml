@@ -1,0 +1,48 @@
+#rabbitmq
+spring:
+  rabbitmq:
+    host: 192.168.0.105
+    port: 5672
+    username: root
+    password: root
+    virtual-host: /bjky
+    #开启消息确认
+    publisher-confirm-type: correlated
+    listener:
+      simple:
+        concurrency: 5 # 消费端的监听个数(即@RabbitListener开启几个线程去处理数据。)
+        max-concurrency: 10 #最大并发
+        acknowledge-mode: manual # 签收模式
+        prefetch: 1 # 消费端限流 ，每个线程最多取一个数据
+        retry:
+          max-attempts: 3
+
+  #邮件设置
+  #spring.mail.host=smtp.exmail.qq.com
+  #暂时改为个人邮箱smtp服务器进行测试
+  mail:
+    #坑爹的地方：host 通道个人邮箱和企业邮箱通道不同。163的个人邮箱：smtp.163.com ，企业邮箱：smtp.qiye.163.com
+    # 腾讯的，个人smtp.qq.com， 企业的：smtp.exmail.qq.com
+    host: smtp.qq.com
+    username: 849323338@qq.com
+    # 口令是QQ邮箱开通的smtp服务后得到的客户端授权码,不是你的邮箱登录密码
+    password: mgtjucwkkikqbbcd
+    default-encoding: UTF-8
+
+mail:
+  to:
+    name: "sufengchen2021@163.com"
+    title: "投递消息失败"
+#spring:
+#  servlet:
+#    multipart:
+#      enabled: true #是否启用http上传处理
+#      max-file-size: 10MB #设置单个文件最大长度
+#      max-request-size: 100MB #最大请求文件的大小
+#  cloud:
+#    nacos:
+#      discovery:
+#        server-addr: 127.0.0.1:8848
+#        username: nacos
+#        password: nacos
+#        namespace: public #默认就是public

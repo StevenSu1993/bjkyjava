@@ -1,7 +1,10 @@
 package com.baojikouyu.teach.util;
 
 
+import com.baojikouyu.teach.pojo.FailMqMessage;
+import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Component;
@@ -15,6 +18,9 @@ import java.util.concurrent.Future;
 @Component
 @Slf4j
 public class AsyncTasks {
+
+    @Autowired
+    private MailUtil mailUtil;
 
     @Async
     public Future<Boolean> saveFile(String filePath, String newFileName, MultipartFile file) {
@@ -47,4 +53,33 @@ public class AsyncTasks {
             file1.deleteOnExit();//等待别的线程对文件操作完成的时候删除掉文件
         }
     }
+
+
+    @Async
+    public void sendMail(String toName, String titile, FailMqMessage failMqMessage) {
+        try {
+            log.info("异步发送邮件 ： sendMail");
+            mailUtil.sendSimpleMail(toName,titile,new Gson().toJson(failMqMessage));
+        } catch (Exception e) {
+            log.info("异步发送邮件失败原因：{}", e.getMessage());
+            e.printStackTrace();
+        }
+
+
+    }
+
+    @Async
+    public void sendMail(String toName, String titile, String failMqMessage) {
+        try {
+            log.info("异步发送邮件 ： sendMail");
+            mailUtil.sendSimpleMail(toName,titile,failMqMessage);
+        } catch (Exception e) {
+            log.info("异步发送邮件失败原因：{}", e.getMessage());
+            e.printStackTrace();
+        }
+
+
+    }
+
+
 }
