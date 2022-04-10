@@ -66,9 +66,9 @@ public class FileController {
                 // 如果文件夹下的文件很多在这里做更新grade 操作那么效率是非常慢的。用户体验相当不好
 
                 List<Files> all = filesService.getBatchById(fdto.getIds());
-                final List<Files> AllFolder = all.stream().filter(f -> f.getIsFolder()).collect(Collectors.toList());
-                recursion(AllFolder);
-                rabbitTemplate.convertAndSend(rabbitMqConstant.UPDATEGRADEEXCHANGE, rabbitMqConstant.UPDATEGRADEROUTINGKEY, AllFolder);
+                final List<Files> allFolder = all.stream().filter(f -> f.getIsFolder()).collect(Collectors.toList());
+//                recursion(AllFolder);
+                rabbitTemplate.convertAndSend(rabbitMqConstant.UPDATEGRADEEXCHANGE, rabbitMqConstant.UPDATEGRADEROUTINGKEY, allFolder);
                 return new ResponseBean(200, "修改成功", "移动成功");
             } else {
                 return new ResponseBean(400, "修改失败", "修改失败");
@@ -238,7 +238,7 @@ public class FileController {
     }
 
 
-    public void recursion(List<Files> filesList) {
+  /*  public void recursion(List<Files> filesList) {
         filesList.stream().forEach(i -> {
             if (i.getIsFolder()) {
                 // 文件夹的grade 也要该
@@ -255,5 +255,5 @@ public class FileController {
                 filesService.updateById(i);
             }
         });
-    }
+    }*/
 }

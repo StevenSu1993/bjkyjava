@@ -17,7 +17,7 @@
     <properties>
         <java.version>11</java.version>
         <spring.cloud.alibaba.version>2.2.7.RELEASE</spring.cloud.alibaba.version>
-        <!--        <spring.boot.version>2.6.4</spring.boot.version> 如果和nacos 指定的版本不一致会启动不成功-->
+<!--                <spring.boot.version>2.6.4</spring.boot.version> &lt;!&ndash;如果和nacos 指定的版本不一致会启动不成功&ndash;&gt;-->
         <spring.boot.version>2.3.12.RELEASE</spring.boot.version>
         <spring.cloud.version>Hoxton.SR12</spring.cloud.version>
         <mybatis.spring.boot>2.2.2</mybatis.spring.boot>

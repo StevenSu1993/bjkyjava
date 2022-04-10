@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
@@ -26,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Future;
+import java.util.stream.Collectors;
 
 /**
  * @author Administrator
@@ -42,6 +44,7 @@ public class FilesServiceImpl extends ServiceImpl<FilesMapper, Files>
     private FilesMapper filesMapper;
 
     @Autowired
+    @Lazy
     private AsyncTasks asyncTasks;
 
     @Override
@@ -123,9 +126,10 @@ public class FilesServiceImpl extends ServiceImpl<FilesMapper, Files>
 //            allEntries = true)
     public Boolean deleteFilesByIds(Integer[] ids) {
         int i = 0;
+        List<Integer> idList = Arrays.stream(ids).filter(id -> id != null).collect(Collectors.toList());
         List<Files> files;
         try {
-            files = filesMapper.selectBatchIds(Arrays.asList(ids));
+            files = filesMapper.selectBatchIds(idList);
             i = filesMapper.deleteBatchIds(Arrays.asList(ids));
         } catch (Exception e) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
@@ -133,9 +137,7 @@ public class FilesServiceImpl extends ServiceImpl<FilesMapper, Files>
             return false;
         }
         files.forEach(files1 -> {
-            if (!files1.getIsFolder()) {
-                asyncTasks.deleteFile(files1.getFilePath() + files1.getUuidFileName());
-            }
+            asyncTasks.deleteFolder(files1);
         });
         return i > 0;
     }
@@ -149,7 +151,7 @@ public class FilesServiceImpl extends ServiceImpl<FilesMapper, Files>
         if (!StringUtils.isBlank(fdto.getName())) {
             queryWrapper.like(Files::getFileName, fdto.getName());
         }
-        if (fdto.getType() != 0) {
+        if (fdto.getType() != null && fdto.getType() != 0) {
             queryWrapper.eq(Files::getType, fdto.getType());
         }
         if (fdto.getRang() == 0) {
@@ -211,6 +213,7 @@ public class FilesServiceImpl extends ServiceImpl<FilesMapper, Files>
     @Override
     @CacheEvict(cacheNames = "files",
             allEntries = true)
+    @Transactional
     public Boolean updateByIds(Integer[] ids, Integer to, Integer grade) {
         LambdaUpdateWrapper<Files> updateWrapper = Wrappers.lambdaUpdate(Files.class);
         updateWrapper.in(ids.length > 0, Files::getId, ids);
@@ -218,6 +221,10 @@ public class FilesServiceImpl extends ServiceImpl<FilesMapper, Files>
         updateWrapper.set(grade != null, Files::getFolderGrade, grade);
         int update = filesMapper.update(null, updateWrapper);
         if (update > 0) {
+            // 按道理来说应该是放到rabbitMq 中去。
+            List<Files> all = getBatchById(ids);
+            final List<Files> allFolder = all.stream().filter(f -> f.getIsFolder()).collect(Collectors.toList());
+            recursion(allFolder);
             return true;
         } else return false;
     }
@@ -259,6 +266,27 @@ public class FilesServiceImpl extends ServiceImpl<FilesMapper, Files>
         }
         return finalFiles;
     }
+
+
+    public void recursion(List<Files> filesList) {
+        filesList.stream().forEach(i -> {
+            if (i.getIsFolder()) {
+                // 文件夹的grade 也要该
+                List<Files> childrenByFolderParentId = getChildrenByFolderParentId(i.getId());
+                Files parentFolder = getOneByParentFolderId(i.getParentFolderId());
+                i.setFolderGrade(parentFolder.getFolderGrade() + 1);
+                updateById(i);
+                // d递归调用
+                recursion(childrenByFolderParentId);
+            } else {
+                // 修改普通文件grade
+                Files parentFolder = getOneByParentFolderId(i.getParentFolderId());
+                i.setFolderGrade(parentFolder.getFolderGrade() + 1);
+                updateById(i);
+            }
+        });
+    }
+
 }
 
 
