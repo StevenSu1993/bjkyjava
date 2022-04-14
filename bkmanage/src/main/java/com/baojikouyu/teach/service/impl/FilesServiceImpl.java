@@ -50,7 +50,7 @@ public class FilesServiceImpl extends ServiceImpl<FilesMapper, Files>
     @Override
 //    @Cacheable(value = "getPageByType")
     @Cacheable()
-    public Page<Files> getPageByType(Integer start, Integer size, Integer type, Integer grade, Integer parentFolderId) {
+    public Page<Files> getPageByType(Integer orderValueQuery, Integer start, Integer size, Integer type, Integer grade, Integer parentFolderId) {
         LambdaQueryWrapper<Files> queryWrapper = Wrappers.lambdaQuery();
         Page<Files> page = new Page<>();
         page.setCurrent(start);
@@ -62,8 +62,20 @@ public class FilesServiceImpl extends ServiceImpl<FilesMapper, Files>
         queryWrapper.eq(type != 0, Files::getType, type);
         queryWrapper.eq(grade != null, Files::getFolderGrade, grade);
         queryWrapper.eq(parentFolderId != null, Files::getParentFolderId, parentFolderId);
-        queryWrapper.orderByDesc(Files::getType, Files::getFolderGrade, Files::getUploadTime);
+//        queryWrapper.orderByDesc(Files::getType, Files::getFolderGrade, Files::getUploadTime);
+        if (orderValueQuery == 0) {
+            //按照名称排序
+            queryWrapper.orderByDesc(Files::getIsFolder, Files::getFileName);
+        } else {
+            //按照时间排序
+            queryWrapper.orderByDesc(Files::getIsFolder, Files::getUploadTime);
+        }
         return filesMapper.selectPage(page, queryWrapper);
+//        适用case when 方式
+//        queryWrapper.last("order by case when is_folder = '1' then 2 else 1 end desc, upload_time desc");
+//        select  case id  when 42 then "bbbb" else id end, file_name  from files
+//        SELECT id,file_name,file_path,upload_time,uuid_file_name,file_type,type,url,creater_name,creater_id,is_folder,parent_folder_id,folder_grade FROM files WHERE (parent_folder_id = 85) order by  case when is_folder = '1' then 2 else 1 end desc, case when type = 1 then 2 else 1 end desc, upload_time desc LIMIT 10
+
     }
 
     @Override
@@ -245,6 +257,12 @@ public class FilesServiceImpl extends ServiceImpl<FilesMapper, Files>
     @Cacheable
     public List<Files> getChildrenByFolderParentId(Integer id) {
         return filesMapper.selectList(Wrappers.lambdaQuery(Files.class).eq(id != null, Files::getParentFolderId, id));
+    }
+
+    @Override
+    @Cacheable
+    public Files getRootFolder() {
+        return filesMapper.selectOne(Wrappers.lambdaQuery(Files.class).eq(Files::getFolderGrade, 1));
     }
 
     public List<Files> getTreeFolder(List<Files> filesList) {
