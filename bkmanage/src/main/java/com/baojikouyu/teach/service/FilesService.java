@@ -18,7 +18,7 @@ import java.util.concurrent.Future;
 */
 public interface FilesService extends IService<Files> {
 
-    Page<Files> getPageByType(Integer start, Integer size, Integer type, Integer grade,Integer parentFolderId);
+    Page<Files> getPageByType(Integer orderValueQuery,Integer start, Integer size, Integer type, Integer grade,Integer parentFolderId);
 
 //    Future<Boolean> saveFile(String filePath, String newFileName, MultipartFile file);
 
@@ -43,4 +43,6 @@ public interface FilesService extends IService<Files> {
     List<Files> getBatchById(Integer[] ids);
 
     List<Files> getChildrenByFolderParentId(Integer id);
+
+    Files getRootFolder();
 }

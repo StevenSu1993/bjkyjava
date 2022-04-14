@@ -2,8 +2,10 @@ package com.baojikouyu.teach.pojo;
 
 import lombok.Data;
 
+import java.io.Serializable;
+
 @Data
-public class FilesDto {
+public class FilesDto implements Serializable {
 
     private Integer id;
 

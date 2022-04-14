@@ -24,7 +24,7 @@ public class CORSConfiguration implements WebMvcConfigurer {
     }
 */
 
-    // 跨域问题
+    // 跨域问题 在shiro 中做了跨域的处理
     @Override
     public void addCorsMappings(CorsRegistry registry) {
 

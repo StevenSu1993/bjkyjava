@@ -1,7 +1,9 @@
 package com.baojikouyu.teach.controller;
 
 import com.baojikouyu.teach.mapper.UserMapper;
+import com.baojikouyu.teach.pojo.Files;
 import com.baojikouyu.teach.pojo.User;
+import com.baojikouyu.teach.service.FilesService;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.junit.jupiter.api.Test;
@@ -16,6 +18,9 @@ public class mybatisTest {
     @Qualifier("userMapper")
     UserMapper userMapper;
 
+    @Autowired
+    FilesService filesService;
+
     @Test
     public void test1() {
 
@@ -28,6 +33,11 @@ public class mybatisTest {
     @Test
     public void test2() {
 
+//
+//        public Page<Files> getPageByType(Integer orderValueQuery, Integer start, Integer size, Integer type, Integer grade, Integer parentFolderId) {
+
+        final Page<Files> pageByType = filesService.getPageByType(1, 0, 10, 0, null, 85);
+        System.out.println(pageByType);
 
     }
 

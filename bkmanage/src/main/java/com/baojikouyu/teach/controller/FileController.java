@@ -8,6 +8,7 @@ import com.baojikouyu.teach.constant.rabbitMqConstant;
 import com.baojikouyu.teach.pojo.Files;
 import com.baojikouyu.teach.pojo.FilesDto;
 import com.baojikouyu.teach.pojo.ResponseBean;
+import com.baojikouyu.teach.pojo.wangEditorDto;
 import com.baojikouyu.teach.service.FilesService;
 import com.baojikouyu.teach.util.FileTypeUtil;
 import com.baojikouyu.teach.util.ShiroUtil;
@@ -27,6 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
@@ -54,7 +56,7 @@ public class FileController {
     @RequiresAuthentication
     @RequiresRoles("admin")
     @GetMapping("/auth/moveFileToFolder")
-    public ResponseBean moveFileToFolder(FilesDto fdto ) {
+    public ResponseBean moveFileToFolder(FilesDto fdto) {
         if (fdto.getIds().length < 1 || fdto.getTo() == null) {
             return new ResponseBean(400, "请求参数有误，请核对后在提交", "请求参数有误，请核对后在提交");
         }
@@ -177,12 +179,14 @@ public class FileController {
         Integer startQuery = Optional.ofNullable(fdto.getStart()).orElse(0);
         Integer sizeQuery = Optional.ofNullable(fdto.getSize()).orElse(10);
         Integer gradeQuery = Optional.ofNullable(fdto.getFolderGrade()).orElse(2);
+        Integer orderValueQuery= Optional.ofNullable(fdto.getOrderValue()).orElse(0);
+
         Page<Files> pageByType;
         if (fdto.getIsCreated() == null || fdto.getIsCreated() == false) {
-            pageByType = filesService.getPageByType(startQuery, sizeQuery, fdto.getType(), null,fdto.getParentFolderId());
+            pageByType = filesService.getPageByType(orderValueQuery,startQuery, sizeQuery, fdto.getType(), null, fdto.getParentFolderId());
         } else {
             // 页面初始化的时候，第一次需要grade
-            pageByType = filesService.getPageByType(startQuery, sizeQuery, fdto.getType(), gradeQuery, fdto.getParentFolderId());
+            pageByType = filesService.getPageByType(orderValueQuery,startQuery, sizeQuery, fdto.getType(), gradeQuery, fdto.getParentFolderId());
         }
         return new ResponseBean(200, "成功获取上传的文件", pageByType);
     }
@@ -198,22 +202,84 @@ public class FileController {
         if (file.getSize() <= 0) {
             return new ResponseBean(400, "上传的文件大小需要大于0kb", false);
         }
-        if (curentFolderId == null) {
-            return new ResponseBean(400, "curentFolderId 不能为空", false);
+//        if (curentFolderId == null) {
+//            return new ResponseBean(400, "curentFolderId 不能为空", false);
+//        }
+        HashMap<String, Object> resultMap = toSaveFiles(file, curentFolderId == null ? filesService.getRootFolder() : filesService.getOneById(curentFolderId));
+        if (!(Boolean) resultMap.get("isSuccess")) {
+            return new ResponseBean(400, "上传的文件失败", (String) resultMap.get("newFileName"));
         }
+        return new ResponseBean(200, "上传的文件成功", (String) resultMap.get("newFileName"));
+    }
+
+
+    @Log
+    @PostMapping("/auth/wangEditorupImage")
+    @RequiresAuthentication
+    @RequiresRoles("admin")
+    public wangEditorDto wangEditorupImage(MultipartFile file, HttpServletRequest request) throws ExecutionException, InterruptedException {
+        wangEditorDto wangDto = new wangEditorDto();
+        if (file.isEmpty() || file.getSize() <= 0) {
+            wangDto.setErrno(1);
+            return wangDto;
+        }
+        HashMap<String, Object> resultMap = toSaveFiles(file, filesService.getRootFolder());
+
+        if ((Boolean) resultMap.get("isSuccess")) {
+            wangDto.setErrno(0);
+            HashMap<String, String> map = new HashMap<>();
+            map.put("url", ((Files) resultMap.get("files")).getUrl());
+            map.put("alt", ((Files) resultMap.get("files")).getFileName());
+            map.put("href", ((Files) resultMap.get("files")).getUrl());
+            Map[] result = new Map[1];
+            result[0] = map;
+//            {
+//                url: "图片地址",
+//                        alt: "图片文字说明",
+//                    href: "跳转链接"
+//            },
+
+            wangDto.setData(result);
+        } else {
+            wangDto.setErrno(1);
+        }
+        return wangDto;
+    }
+
+    @Log
+    @PostMapping("/auth/wangEditorupVideo")
+    @RequiresAuthentication
+    @RequiresRoles("admin")
+    public wangEditorDto wangEditorupVideo(MultipartFile file, HttpServletRequest request) throws ExecutionException, InterruptedException {
+        wangEditorDto wangDto = new wangEditorDto();
+        if (file.isEmpty() || file.getSize() <= 0) {
+            wangDto.setErrno(1);
+            return wangDto;
+        }
+        HashMap<String, Object> resultMap = toSaveFiles(file, filesService.getRootFolder());
+        if ((Boolean) resultMap.get("isSuccess")) {
+            wangDto.setErrno(0);
+            HashMap<String, String> result = new HashMap<>();
+            result.put("url", ((Files) resultMap.get("files")).getUrl());
+            wangDto.setData(result);
+        } else {
+            wangDto.setErrno(1);
+        }
+        return wangDto;
+    }
+
+
+    public Files getFilesByUpFile(MultipartFile file, Files parentFiles, String uuidFileName, String newFileName) {
         String userName = ShiroUtil.getUserName();
         Integer userId = ShiroUtil.getUserId();
         System.out.println(file.getContentType());//image/png
         String fileExtension = Objects.requireNonNull(file.getContentType()).split("/")[1].toUpperCase();
         Integer fileType = FileTypeUtil.isFileType(fileExtension);
         String originFileName = file.getOriginalFilename();//获取文件原始的名称
-        String uuidFileName = UUID.randomUUID().toString();
-        String newFileName = uuidFileName + "." + Objects.requireNonNull(file.getOriginalFilename()).split("\\.")[1];
         //获取项目运行的绝对路径
 //        String filePath = System.getProperty("user.dir");
         String filePath = fileRootPath;
 
-        Files parentFiles = filesService.getOneById(curentFolderId);
         Files files = new Files();
         files.setCreaterName(userName);
         files.setCreaterId(userId);
@@ -227,17 +293,24 @@ public class FileController {
         files.setIsFolder(false);
 //        final Integer grade = Integer.valueOf(request.getParameter("grade"));
         files.setFolderGrade(parentFiles.getFolderGrade() + 1);
-        files.setParentFolderId(curentFolderId);
+        files.setParentFolderId(parentFiles.getId());
+        return files;
 
-        //开启异步任务一个是往数据库中插入，一个是往磁盘中写文件
-        Boolean isSuccess = filesService.saveFile(filePath, newFileName, file, files);
-        if (!isSuccess) {
-            return new ResponseBean(400, "上传的文件失败", newFileName);
-        }
-        return new ResponseBean(200, "上传的文件成功", newFileName);
     }
 
 
+    public HashMap<String, Object> toSaveFiles(MultipartFile file, Files parentFiles) throws ExecutionException, InterruptedException {
+        String uuidFileName = UUID.randomUUID().toString();
+        String newFileName = uuidFileName + "." + Objects.requireNonNull(file.getOriginalFilename()).split("\\.")[1];
+        Files files = getFilesByUpFile(file, parentFiles, uuidFileName, newFileName);
+        //开启异步任务一个是往数据库中插入，一个是往磁盘中写文件
+        HashMap<String, Object> map = new HashMap<>();
+        Boolean isSuccess = filesService.saveFile(fileRootPath, newFileName, file, files);
+        map.put("isSuccess", isSuccess);
+        map.put("newFileName", newFileName);
+        map.put("files", files);
+        return map;
+    }
   /*  public void recursion(List<Files> filesList) {
         filesList.stream().forEach(i -> {
             if (i.getIsFolder()) {

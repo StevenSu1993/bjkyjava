@@ -1,6 +1,8 @@
 package com.baojikouyu.teach.pojo;
 
-public class UserBean {
+import java.io.Serializable;
+
+public class UserBean  implements Serializable {
     private String username;
 
     private String password;
