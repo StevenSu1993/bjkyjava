@@ -1,9 +1,9 @@
 package com.baojikouyu.teach.service.impl;
 
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.baojikouyu.teach.mapper.DirectoryMapper;
 import com.baojikouyu.teach.pojo.Directory;
 import com.baojikouyu.teach.service.DirectoryService;
-import com.baojikouyu.teach.mapper.DirectoryMapper;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;

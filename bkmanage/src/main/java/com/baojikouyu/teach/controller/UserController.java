@@ -2,7 +2,6 @@ package com.baojikouyu.teach.controller;
 
 import cn.hutool.core.util.IdUtil;
 import com.baojikouyu.teach.exception.UnauthorizedException;
-
 import com.baojikouyu.teach.pojo.AuthUserDto;
 import com.baojikouyu.teach.pojo.ResponseBean;
 import com.baojikouyu.teach.pojo.User;
@@ -22,15 +21,12 @@ import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.codec.Base64;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletRequest;
 import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;

@@ -1,13 +1,17 @@
 package com.baojikouyu.teach.util;
 
 
+import com.baojikouyu.teach.mapper.TemplateMapper;
 import com.baojikouyu.teach.pojo.FailMqMessage;
 import com.baojikouyu.teach.pojo.Files;
+import com.baojikouyu.teach.pojo.Template;
 import com.baojikouyu.teach.service.FilesService;
+import com.baojikouyu.teach.service.TemplateService;
+import com.baojikouyu.teach.service.impl.TemplateServiceImpl;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Component;
@@ -27,8 +31,6 @@ public class AsyncTasks {
     @Autowired
     private MailUtil mailUtil;
 
-    @Autowired
-    private FilesService filesService;
 
     @Async
     public Future<Boolean> saveFile(String filePath, String newFileName, MultipartFile file) {
@@ -62,17 +64,17 @@ public class AsyncTasks {
         }
     }
 
-
     @Async
     @Transactional
-    public void deleteFolder(Files files) {
+    public void deleteFolder(FilesService filesService, Files files) {
+
         log.info("deleteFolder异步方法线程:{}", Thread.currentThread().getName());
         if (files.getIsFolder() == true) {
             // 如果是文件夹就继续遍历 遍历得到改文件夹下所有的文件
             filesService.removeById(files.getId());
             List<Files> children = filesService.getChildrenByFolderParentId(files.getId());
             children.stream().forEach(
-                    files1 -> deleteFolder(files1)
+                    files1 -> deleteFolder(filesService, files1)
             );
         } else {
             deleteFile(files.getFilePath() + files.getUuidFileName());
@@ -106,4 +108,43 @@ public class AsyncTasks {
     }
 
 
+    @Async
+    public void deleteTemplate(TemplateServiceImpl templateService, TemplateMapper templateMapper, List<Template> templates) {
+        for (Template template : templates) {
+            if (!template.getIsFolder()) {
+                templateService.removeById(template);
+//                templateService.deleteOne(template);
+            } else {
+                List<Template> list = templateService.list(Wrappers.lambdaQuery(Template.class).eq(Template::getParentFolderId, template.getId()));
+                deleteTemplate(templateService, templateMapper, list);
+            }
+
+        }
+
+
+    }
+
+    @Async
+    @Transactional
+    public void updateTemplateFolder(TemplateService templateService, List<Template> templateList) {
+        log.info("当前线程：" + Thread.currentThread().getName());
+        templateList.stream().forEach(i -> {
+            if (i.getIsFolder()) {
+                // 文件夹的grade 也要该
+                List<Template> childrenTemplates = templateService.getChildrenByFolderParentId(i.getId());
+                Template parentTemplate = templateService.getOneByParentFolderId(i.getParentFolderId());
+                i.setFolderGrade(parentTemplate.getFolderGrade() + 1);
+                templateService.updateById(i);
+                // d递归调用
+                updateTemplateFolder(templateService, childrenTemplates);
+            } else {
+                // 修改普通文件grade
+                Template parentFolder = templateService.getOneByParentFolderId(i.getParentFolderId());
+                i.setFolderGrade(parentFolder.getFolderGrade() + 1);
+                templateService.updateById(i);
+            }
+        });
+
+
+    }
 }

@@ -11,12 +11,11 @@ import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.SimpleAuthenticationInfo;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
-import org.apache.shiro.cache.CacheManagerAware;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
@@ -26,6 +25,7 @@ import java.util.Set;
 public class MyRealm extends AuthorizingRealm {
 
     @Autowired
+    @Lazy
     private RedisTemplate redisTemplate;
 
     private static final Logger LOGGER = LogManager.getLogger(MyRealm.class);
@@ -35,6 +35,7 @@ public class MyRealm extends AuthorizingRealm {
     }
 
     @Autowired
+    @Lazy
     public UserService userService;
 
     /**

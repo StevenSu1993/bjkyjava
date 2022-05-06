@@ -1,9 +1,9 @@
 package com.baojikouyu.teach.service.impl;
 
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.baojikouyu.teach.mapper.PermissionMapper;
 import com.baojikouyu.teach.pojo.Permission;
 import com.baojikouyu.teach.service.PermissionService;
-import com.baojikouyu.teach.mapper.PermissionMapper;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
 /**

@@ -17,7 +17,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
@@ -44,7 +43,7 @@ public class FilesServiceImpl extends ServiceImpl<FilesMapper, Files>
     private FilesMapper filesMapper;
 
     @Autowired
-    @Lazy
+//    @Lazy
     private AsyncTasks asyncTasks;
 
     @Override
@@ -149,7 +148,7 @@ public class FilesServiceImpl extends ServiceImpl<FilesMapper, Files>
             return false;
         }
         files.forEach(files1 -> {
-            asyncTasks.deleteFolder(files1);
+            asyncTasks.deleteFolder(this, files1);
         });
         return i > 0;
     }
@@ -263,6 +262,30 @@ public class FilesServiceImpl extends ServiceImpl<FilesMapper, Files>
     @Cacheable
     public Files getRootFolder() {
         return filesMapper.selectOne(Wrappers.lambdaQuery(Files.class).eq(Files::getFolderGrade, 1));
+    }
+
+    @Override
+    @Cacheable
+    public Page<Files> getPageByType(String name, Integer orderValueQuery, Integer start, Integer size, Integer type, Integer grade, Integer parentFolderId) {
+
+        LambdaQueryWrapper<Files> queryWrapper = Wrappers.lambdaQuery();
+        Page<Files> page = new Page<>();
+        page.setCurrent(start);
+        page.setSize(size);
+        queryWrapper.eq(type != 0, Files::getType, type);
+        queryWrapper.eq(grade != null, Files::getFolderGrade, grade);
+        queryWrapper.eq(parentFolderId != null, Files::getParentFolderId, parentFolderId);
+        queryWrapper.like(name != null, Files::getFileName, name);
+//        queryWrapper.orderByDesc(Files::getType, Files::getFolderGrade, Files::getUploadTime);
+        if (orderValueQuery == 0) {
+            //按照名称排序
+            queryWrapper.orderByDesc(Files::getIsFolder, Files::getFileName);
+        } else {
+            //按照时间排序
+            queryWrapper.orderByDesc(Files::getIsFolder, Files::getUploadTime);
+        }
+        return filesMapper.selectPage(page, queryWrapper);
+
     }
 
     public List<Files> getTreeFolder(List<Files> filesList) {

@@ -12,9 +12,14 @@ import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.apache.shiro.web.filter.InvalidRequestFilter;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.context.annotation.Role;
 import org.springframework.data.redis.core.RedisTemplate;
 
 import javax.servlet.Filter;
@@ -22,10 +27,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Configuration
+@Role(BeanDefinition.ROLE_INFRASTRUCTURE)
 public class ShiroConfig {
 
     @Bean("securityManager")
-    public DefaultWebSecurityManager getManager(MyRealm realm, RedisTemplate redisTemplate) {
+    public DefaultWebSecurityManager getManager(@Lazy MyRealm realm, @Lazy RedisTemplate redisTemplate) {
         DefaultWebSecurityManager manager = new DefaultWebSecurityManager();
         // 使用自己的realm
 /*        realm.setCachingEnabled(true);
@@ -54,7 +60,7 @@ public class ShiroConfig {
     }
 
     @Bean("shiroFilter")
-    public ShiroFilterFactoryBean factory(DefaultWebSecurityManager securityManager) {
+    public ShiroFilterFactoryBean factory(@Lazy DefaultWebSecurityManager securityManager) {
 //    public ShiroFilterFactoryBean factory(DefaultWebSecurityManager securityManager,InvalidRequestFilter invalidRequestFilter) {
         ShiroFilterFactoryBean factoryBean = new ShiroFilterFactoryBean();
 
@@ -101,7 +107,7 @@ public class ShiroConfig {
     }
 
     @Bean
-    public AuthorizationAttributeSourceAdvisor authorizationAttributeSourceAdvisor(DefaultWebSecurityManager securityManager) {
+    public AuthorizationAttributeSourceAdvisor authorizationAttributeSourceAdvisor(@Lazy DefaultWebSecurityManager securityManager) {
         AuthorizationAttributeSourceAdvisor advisor = new AuthorizationAttributeSourceAdvisor();
         advisor.setSecurityManager(securityManager);
         return advisor;
@@ -109,7 +115,7 @@ public class ShiroConfig {
 
     //路径中有中文的时候，shiro 是会拦截的, 不安全
     // @Bean
-    public InvalidRequestFilter invalidRequestFilter(){
+    public InvalidRequestFilter invalidRequestFilter() {
         InvalidRequestFilter invalidRequestFilter = new InvalidRequestFilter();
         invalidRequestFilter.setBlockNonAscii(false);
         invalidRequestFilter.setBlockSemicolon(false);

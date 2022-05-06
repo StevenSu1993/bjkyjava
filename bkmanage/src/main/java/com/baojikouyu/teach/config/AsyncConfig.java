@@ -3,18 +3,19 @@ package com.baojikouyu.teach.config;
 
 import com.baojikouyu.teach.exception.CustomAsyncExceptionHandler;
 import org.springframework.aop.interceptor.AsyncUncaughtExceptionHandler;
-import org.springframework.context.annotation.Bean;
+import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.task.TaskExecutor;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.context.annotation.Role;
 import org.springframework.scheduling.annotation.AsyncConfigurer;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import java.util.concurrent.Executor;
-import java.util.concurrent.ThreadPoolExecutor;
 
-@Configuration
 @EnableAsync
+@Configuration
+@Role(BeanDefinition.ROLE_INFRASTRUCTURE)
 public class AsyncConfig implements AsyncConfigurer {
 
     //异步异常处理

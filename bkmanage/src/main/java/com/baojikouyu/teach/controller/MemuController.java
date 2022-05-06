@@ -4,7 +4,6 @@ import com.baojikouyu.teach.pojo.Menu;
 import com.baojikouyu.teach.pojo.ResponseBean;
 import com.baojikouyu.teach.service.MenuService;
 import com.baojikouyu.teach.util.JWTUtil;
-import com.google.common.collect.Lists;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.subject.Subject;
@@ -13,8 +12,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 @RestController

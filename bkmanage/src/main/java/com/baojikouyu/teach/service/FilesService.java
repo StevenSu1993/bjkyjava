@@ -7,18 +7,16 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 
 /**
-* @author Administrator
-* @description 针对表【files】的数据库操作Service
-* @createDate 2022-03-20 01:00:03
-*/
+ * @author Administrator
+ * @description 针对表【files】的数据库操作Service
+ * @createDate 2022-03-20 01:00:03
+ */
 public interface FilesService extends IService<Files> {
 
-    Page<Files> getPageByType(Integer orderValueQuery,Integer start, Integer size, Integer type, Integer grade,Integer parentFolderId);
+    Page<Files> getPageByType(Integer orderValueQuery, Integer start, Integer size, Integer type, Integer grade, Integer parentFolderId);
 
 //    Future<Boolean> saveFile(String filePath, String newFileName, MultipartFile file);
 
@@ -45,4 +43,6 @@ public interface FilesService extends IService<Files> {
     List<Files> getChildrenByFolderParentId(Integer id);
 
     Files getRootFolder();
+
+    Page<Files> getPageByType(String name, Integer orderValueQuery, Integer startQuery, Integer sizeQuery, Integer type, Integer grade, Integer parentFolderId);
 }

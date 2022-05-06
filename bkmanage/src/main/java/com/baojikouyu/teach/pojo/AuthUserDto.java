@@ -1,6 +1,7 @@
 package com.baojikouyu.teach.pojo;
 
 import lombok.Data;
+
 import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 

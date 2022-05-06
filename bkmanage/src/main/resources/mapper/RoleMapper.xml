@@ -12,11 +12,11 @@
     <sql id="Base_Column_List">
         id,name
     </sql>
-    <select id="getById" resultMap="BaseResultMap">
-        select
-        <include refid="Base_Column_List"/>
-        from role
-        where
-        id = #{id,jdbcType=NUMERIC}
-    </select>
+<!--    <select id="getById" resultMap="BaseResultMap">-->
+<!--        select-->
+<!--        <include refid="Base_Column_List"/>-->
+<!--        from role-->
+<!--        where-->
+<!--        id = #{id,jdbcType=NUMERIC}-->
+<!--    </select>-->
 </mapper>

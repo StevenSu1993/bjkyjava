@@ -1,9 +1,6 @@
 package com.baojikouyu.teach;
 
 
-import com.baojikouyu.teach.config.LogConfig;
-import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
-import org.apache.shiro.web.filter.InvalidRequestFilter;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cache.annotation.EnableCaching;

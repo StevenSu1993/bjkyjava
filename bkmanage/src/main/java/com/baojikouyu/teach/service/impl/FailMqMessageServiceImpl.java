@@ -1,9 +1,9 @@
 package com.baojikouyu.teach.service.impl;
 
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.baojikouyu.teach.mapper.FailMqMessageMapper;
 import com.baojikouyu.teach.pojo.FailMqMessage;
 import com.baojikouyu.teach.service.FailMqMessageService;
-import com.baojikouyu.teach.mapper.FailMqMessageMapper;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
 /**

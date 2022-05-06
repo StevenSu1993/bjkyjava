@@ -12,8 +12,6 @@ import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 @Service
 @CacheConfig(cacheNames = "user",keyGenerator = "keyGenerator")
 public class UserSeviceImpl extends ServiceImpl<UserMapper, User> implements UserService {

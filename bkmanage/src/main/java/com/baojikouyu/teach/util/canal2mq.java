@@ -5,7 +5,6 @@ import com.baojikouyu.teach.pojo.FailMqMessage;
 import com.baojikouyu.teach.service.FailMqMessageService;
 import com.google.gson.Gson;
 import com.rabbitmq.client.Channel;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.annotation.Exchange;
@@ -20,7 +19,6 @@ import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
-import java.util.Map;
 
 @Component
 @Slf4j

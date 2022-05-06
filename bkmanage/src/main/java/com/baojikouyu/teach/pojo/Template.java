@@ -7,16 +7,16 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.LinkedList;
 import java.util.List;
 
 /**
- * @TableName menu
+ * @TableName template
  */
-@TableName(value = "menu")
+@TableName(value = "template")
 @Data
-public class Menu implements Serializable {
+public class Template implements Serializable {
 
     /**
      *
@@ -25,44 +25,19 @@ public class Menu implements Serializable {
     private Integer id;
 
     /**
-     *
+     * 模板名称
      */
     private String name;
 
     /**
-     *
+     * 创建时间
      */
-    private String url;
+    private Date createTime;
 
     /**
-     *
+     * 创建人
      */
-    private Integer ischild;
-
-    /**
-     *
-     */
-    private Integer pid;
-
-    /**
-     *
-     */
-    private Integer roleId;
-
-    /**
-     *
-     */
-    private Date creatTime;
-
-    /**
-     *
-     */
-    private Date updateTime;
-
-    /**
-     *
-     */
-    private Integer type;
+    private String creater;
 
     /**
      *
@@ -70,15 +45,19 @@ public class Menu implements Serializable {
     private Integer createrId;
 
     /**
-     *
+     * 内容(富文本的内容)
      */
-    private String createName;
+    private String content;
 
-    private String component;
+    private Boolean isFolder;
 
-    private String icon;
 
-    private List<Menu> childMenu = new LinkedList<>();
+    private Integer folderGrade;
+
+    private Integer parentFolderId;
+
+    @TableField(exist = false)
+    private List<Template> childrenFolder = new ArrayList<>();
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;

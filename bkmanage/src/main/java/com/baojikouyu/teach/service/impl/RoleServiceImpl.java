@@ -1,9 +1,9 @@
 package com.baojikouyu.teach.service.impl;
 
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.baojikouyu.teach.mapper.RoleMapper;
 import com.baojikouyu.teach.pojo.Role;
 import com.baojikouyu.teach.service.RoleService;
-import com.baojikouyu.teach.mapper.RoleMapper;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

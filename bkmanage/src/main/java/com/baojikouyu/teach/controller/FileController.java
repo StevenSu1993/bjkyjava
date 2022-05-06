@@ -19,6 +19,7 @@ import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -173,23 +174,48 @@ public class FileController {
     }
 
 
+    /*
+       查询某个目录下的指定类型的文件
+     */
     @RequiresAuthentication
     @GetMapping("/auth/getFileByType")
     public ResponseBean getFile(FilesDto fdto) {
         Integer startQuery = Optional.ofNullable(fdto.getStart()).orElse(0);
         Integer sizeQuery = Optional.ofNullable(fdto.getSize()).orElse(10);
         Integer gradeQuery = Optional.ofNullable(fdto.getFolderGrade()).orElse(2);
-        Integer orderValueQuery= Optional.ofNullable(fdto.getOrderValue()).orElse(0);
+        Integer orderValueQuery = Optional.ofNullable(fdto.getOrderValue()).orElse(0);
 
         Page<Files> pageByType;
         if (fdto.getIsCreated() == null || fdto.getIsCreated() == false) {
-            pageByType = filesService.getPageByType(orderValueQuery,startQuery, sizeQuery, fdto.getType(), null, fdto.getParentFolderId());
+            pageByType = filesService.getPageByType(orderValueQuery, startQuery, sizeQuery, fdto.getType(), null, fdto.getParentFolderId());
         } else {
             // 页面初始化的时候，第一次需要grade
-            pageByType = filesService.getPageByType(orderValueQuery,startQuery, sizeQuery, fdto.getType(), gradeQuery, fdto.getParentFolderId());
+            pageByType = filesService.getPageByType(orderValueQuery, startQuery, sizeQuery, fdto.getType(), gradeQuery, fdto.getParentFolderId());
         }
         return new ResponseBean(200, "成功获取上传的文件", pageByType);
     }
+
+    /*
+     根据类型查询所有级别的文件
+   */
+    @RequiresAuthentication
+    @GetMapping("/auth/getAllFileByType")
+    public ResponseBean getAllFileByType(FilesDto fdto) {
+        Integer startQuery = Optional.ofNullable(fdto.getStart()).orElse(0);
+        Integer sizeQuery = Optional.ofNullable(fdto.getSize()).orElse(10);
+        Integer orderValueQuery = Optional.ofNullable(fdto.getOrderValue()).orElse(0);
+
+        Page<Files> pageByType;
+
+        if (StringUtils.isEmpty(fdto.getName())) {
+            pageByType = filesService.getPageByType(orderValueQuery, startQuery, sizeQuery, fdto.getType(), null, null);
+        }else {
+            pageByType = filesService.getPageByType(fdto.getName(),orderValueQuery, startQuery, sizeQuery, fdto.getType(), null, null);
+        }
+
+        return new ResponseBean(200, "成功获取上传的文件", pageByType);
+    }
+
 
     @Log
     @PostMapping("/auth/uploadFile")

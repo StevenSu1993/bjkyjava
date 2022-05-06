@@ -1,9 +1,9 @@
 package com.baojikouyu.teach.service.impl;
 
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.baojikouyu.teach.mapper.RoleMenuMapper;
 import com.baojikouyu.teach.pojo.RoleMenu;
 import com.baojikouyu.teach.service.RoleMenuService;
-import com.baojikouyu.teach.mapper.RoleMenuMapper;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
 /**
