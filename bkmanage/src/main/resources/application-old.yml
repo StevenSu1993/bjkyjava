@@ -34,7 +34,7 @@ spring:
       time-to-live: 5000ms
   #rabbitmq
   rabbitmq:
-    host: 192.168.0.105
+    host: 192.168.31.115
     port: 5672
     username: root
     password: root

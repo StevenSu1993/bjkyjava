@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.baojikouyu.teach.mapper.CommentMapper">
+
+    <resultMap id="BaseResultMap" type="com.baojikouyu.teach.pojo.Comment">
+        <id property="id" column="id" jdbcType="INTEGER"/>
+        <id property="commentId" column="comment_id" jdbcType="INTEGER"/>
+        <result property="path" column="path" jdbcType="VARCHAR"/>
+        <result property="textContent" column="text_content" jdbcType="VARCHAR"/>
+        <result property="homeWorkId" column="home_work_id" jdbcType="INTEGER"/>
+        <result property="courseId" column="course_id" jdbcType="INTEGER"/>
+        <result property="userId" column="user_id" jdbcType="INTEGER"/>
+        <result property="userName" column="user_name" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="score" column="score" jdbcType="INTEGER"/>
+        <result property="commentTextContent" column="comment_text_content" jdbcType="VARCHAR"/>
+        <result property="commentPath" column="comment_path" jdbcType="VARCHAR"/>
+        <result property="avatarUrl" column="avatar_url" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,path,home_work_id,
+        course_id,user_id,user_name,
+        create_time,score,comment_text_content,
+        avatar_url,content,comment_voice,
+        comment_path,text_content
+    </sql>
+</mapper>
